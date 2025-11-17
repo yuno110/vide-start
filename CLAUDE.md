@@ -239,14 +239,152 @@ frontend/src/
 
 ## 작업 방식
 
-### 커밋 규칙
+### 개발 원칙
+
+#### TDD (Test-Driven Development)
+**백엔드와 코어 로직 구현 시 반드시 TDD 방식으로 개발합니다.**
+
+1. **Red**: 실패하는 테스트 작성
+2. **Green**: 테스트를 통과하는 최소한의 코드 작성
+3. **Refactor**: 코드 개선 및 리팩토링
+
+**적용 범위:**
+- 도메인 로직 (Service Layer)
+- 비즈니스 규칙 검증
+- Repository 쿼리 로직
+- 유틸리티 함수
+
+**예시 워크플로우:**
+```java
+// 1. 테스트 먼저 작성 (Red)
+@Test
+void 사용자_생성_시_비밀번호가_암호화되어야_한다() {
+    // given
+    UserCreateRequest request = new UserCreateRequest("user@example.com", "password123");
+
+    // when
+    User user = userService.createUser(request);
+
+    // then
+    assertThat(user.getPassword()).isNotEqualTo("password123");
+    assertThat(passwordEncoder.matches("password123", user.getPassword())).isTrue();
+}
+
+// 2. 테스트를 통과하는 구현 (Green)
+public User createUser(UserCreateRequest request) {
+    String encodedPassword = passwordEncoder.encode(request.getPassword());
+    User user = new User(request.getEmail(), encodedPassword);
+    return userRepository.save(user);
+}
+
+// 3. 리팩토링 (Refactor)
+```
+
+#### SOLID 원칙
+**모든 백엔드 코드는 SOLID 원칙을 준수합니다.**
+
+1. **SRP (Single Responsibility Principle)**: 단일 책임 원칙
+   - 각 클래스는 하나의 책임만 가짐
+   - Service는 비즈니스 로직만, Repository는 데이터 접근만
+
+2. **OCP (Open-Closed Principle)**: 개방-폐쇄 원칙
+   - 확장에는 열려있고 수정에는 닫혀있음
+   - 인터페이스와 추상화 활용
+
+3. **LSP (Liskov Substitution Principle)**: 리스코프 치환 원칙
+   - 하위 타입은 상위 타입을 대체 가능
+
+4. **ISP (Interface Segregation Principle)**: 인터페이스 분리 원칙
+   - 클라이언트가 사용하지 않는 인터페이스에 의존하지 않음
+
+5. **DIP (Dependency Inversion Principle)**: 의존성 역전 원칙
+   - 구체화가 아닌 추상화에 의존
+   - 의존성 주입(DI) 활용
+
+#### Clean Architecture
+**레이어 간 의존성 방향을 명확히 하고 도메인 중심 설계를 따릅니다.**
+
+```
+의존성 방향: Presentation → Application → Domain ← Infrastructure
+```
+
+**핵심 규칙:**
+- **Domain Layer**: 외부 의존성 없음 (순수 비즈니스 로직)
+- **Application Layer**: Domain을 조합하여 Use Case 구현
+- **Infrastructure Layer**: 외부 시스템과의 통신 (DB, 외부 API)
+- **Presentation Layer**: HTTP 요청/응답 처리
+
+**예시:**
+```java
+// ❌ 잘못된 예: Service가 Controller에 의존
+public class ArticleService {
+    public ArticleResponse getArticle(HttpServletRequest request) { ... }
+}
+
+// ✅ 올바른 예: 도메인 중심 설계
+public class ArticleService {
+    public Article getArticle(String slug, Long currentUserId) { ... }
+}
+```
+
+### 커밋 및 이슈 관리
+
+#### 커밋 규칙
 - 관련 이슈가 있으면 이슈 번호를 커밋 메시지에 포함 (예: `사용자 인증 기능 구현 (#5)`)
 - 관련 이슈가 없으면 새로 생성 후 번호 포함
 - 변경사항이 많으면 연관된 항목끼리 묶어서 순차적으로 커밋
+- **각 커밋은 빌드 가능하고 테스트가 통과하는 상태여야 함**
+
+#### 작업 완료 확인 프로세스
+**모든 커밋 시점마다 다음을 확인하고 관련 이슈에 커멘트를 남깁니다.**
+
+1. **커밋 전 체크리스트**
+   - [ ] 모든 테스트 통과 (`./gradlew test` 또는 `npm test`)
+   - [ ] 빌드 성공 (`./gradlew build` 또는 `npm run build`)
+   - [ ] Lint 검사 통과
+   - [ ] 코드 리뷰 자가 점검 (SOLID 원칙, Clean Architecture 준수)
+
+2. **이슈 커멘트 작성**
+   - 커밋 후 해당 이슈에 작업 완료 내용을 커멘트로 기록
+   - 인수 조건(Acceptance Criteria) 달성 여부 명시
+
+**커멘트 템플릿:**
+```markdown
+## 작업 완료: [작업 내용 요약]
+
+### 커밋 정보
+- 커밋 해시: `abc1234`
+- 커밋 메시지: 사용자 인증 기능 구현 (#5)
+
+### 구현 내용
+- [x] User 엔티티 생성
+- [x] UserRepository 작성
+- [x] UserService TDD로 구현
+- [x] 비밀번호 암호화 로직 추가
+
+### 테스트 결과
+- 단위 테스트: ✅ 통과 (15개)
+- 통합 테스트: ✅ 통과 (3개)
+- 빌드: ✅ 성공
+
+### 인수 조건 확인
+- [x] 사용자 생성 시 비밀번호가 암호화됨
+- [x] 중복 이메일 검증
+- [x] 유효성 검증 (이메일 형식, 비밀번호 최소 길이)
+
+### 다음 작업
+- JWT 토큰 생성 로직 구현
+```
+
+3. **작업 완료 시 이슈 업데이트**
+   - 체크박스 업데이트
+   - 진행 상황 코멘트 추가
+   - 모든 인수 조건 달성 시 이슈 닫기
 
 ### 문서화
 - README, 기술 문서, 설계 문서 모두 한글로 작성
 - 명확하고 이해하기 쉬운 설명 제공
+- 코드 주석은 "왜(Why)"를 설명 ("무엇(What)"은 코드로 표현)
 
 ### 구현 우선순위
 상세한 작업 목록은 `docs/tasks.md` 참조
