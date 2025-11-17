@@ -249,9 +249,15 @@ RealWorld는 Medium.com을 모델로 한 소셜 블로깅 플랫폼입니다. �
 ### 5.1 백엔드 기술 스택
 
 #### 5.1.1 언어 및 프레임워크
-- **언어**: Java 17+ 또는 Kotlin
-- **프레임워크**: Spring Boot 3.x
-- **빌드 도구**: Gradle (권장) 또는 Maven
+- **언어**: Java 17 LTS (또는 Kotlin 1.9+)
+  - Java 공식 문서: https://docs.oracle.com/en/java/javase/17/
+  - OpenJDK 17 다운로드: https://adoptium.net/
+- **프레임워크**: Spring Boot 3.4.1
+  - 공식 문서: https://spring.io/projects/spring-boot
+  - 시작 가이드: https://spring.io/guides/gs/spring-boot/
+- **빌드 도구**: Gradle 8.x (권장) 또는 Maven 3.9+
+  - Gradle 공식 문서: https://docs.gradle.org/
+  - Maven 공식 문서: https://maven.apache.org/guides/
 
 #### 5.1.2 주요 라이브러리
 - **Spring Security**: JWT 기반 인증 및 권한 관리
@@ -260,10 +266,17 @@ RealWorld는 Medium.com을 모델로 한 소셜 블로깅 플랫폼입니다. �
 - **Spring Web**: REST API 컨트롤러
 
 #### 5.1.3 데이터베이스
-- **DBMS**: PostgreSQL 14+
-- **드라이버**: PostgreSQL JDBC Driver
-- **마이그레이션**: Flyway 또는 Liquibase
+- **DBMS**: PostgreSQL 16.10 (LTS)
+  - 공식 문서: https://www.postgresql.org/docs/16/
+  - 다운로드: https://www.postgresql.org/download/
+  - 시작 가이드: https://www.postgresql.org/docs/16/tutorial.html
+- **드라이버**: PostgreSQL JDBC Driver 42.7+
+  - GitHub: https://github.com/pgjdbc/pgjdbc
+- **마이그레이션**: Flyway 10.x 또는 Liquibase 4.x
+  - Flyway 문서: https://flywaydb.org/documentation/
+  - Liquibase 문서: https://docs.liquibase.com/
 - **연결 풀**: HikariCP (Spring Boot 기본)
+  - GitHub: https://github.com/brettwooldridge/HikariCP
 
 #### 5.1.4 보안
 - **인증 방식**: JWT (JSON Web Token)
@@ -272,33 +285,64 @@ RealWorld는 Medium.com을 모델로 한 소셜 블로깅 플랫폼입니다. �
 - **보안 헤더**: Spring Security 기본 보안 헤더 활성화
 
 #### 5.1.5 기타 도구
-- **로깅**: SLF4J + Logback
-- **문서화**: SpringDoc OpenAPI (Swagger UI)
-- **테스트**: JUnit 5, MockMvc, Testcontainers (PostgreSQL)
+- **로깅**: SLF4J 2.x + Logback 1.5+
+  - SLF4J 문서: https://www.slf4j.org/manual.html
+  - Logback 문서: https://logback.qos.ch/manual/
+- **문서화**: SpringDoc OpenAPI 2.x (Swagger UI)
+  - GitHub: https://github.com/springdoc/springdoc-openapi
+  - 문서: https://springdoc.org/
+- **테스트**: JUnit 5.11+, MockMvc, Testcontainers 1.20+
+  - JUnit 5 문서: https://junit.org/junit5/docs/current/user-guide/
+  - Testcontainers 문서: https://testcontainers.com/guides/getting-started-with-testcontainers-for-java/
 
 ### 5.2 프론트엔드 기술 스택
 
 #### 5.2.1 언어 및 프레임워크
-- **언어**: TypeScript
-- **프레임워크**: React 18+
-- **빌드 도구**: Vite
+- **런타임**: Node.js 20 LTS
+  - 공식 문서: https://nodejs.org/docs/latest-v20.x/api/
+  - 다운로드: https://nodejs.org/
+- **언어**: TypeScript 5.7+
+  - 공식 문서: https://www.typescriptlang.org/docs/
+  - 핸드북: https://www.typescriptlang.org/docs/handbook/intro.html
+- **프레임워크**: React 18.3.1
+  - 공식 문서: https://react.dev/
+  - 시작 가이드: https://react.dev/learn
+  - API 레퍼런스: https://react.dev/reference/react
+- **빌드 도구**: Vite 5.4+
+  - 공식 문서: https://vite.dev/
+  - 시작 가이드: https://vite.dev/guide/
 
 #### 5.2.2 주요 라이브러리
-- **스타일링**: Tailwind CSS
-- **상태 관리**: TanStack Query (React Query) - 서버 상태 관리
-- **라우팅**: TanStack Router 또는 React Router v6
-- **폼 관리**: React Hook Form (선택)
-- **HTTP 클라이언트**: Axios 또는 Fetch API
+- **스타일링**: Tailwind CSS 3.4+
+  - 공식 문서: https://tailwindcss.com/docs
+  - 설치 가이드 (Vite): https://tailwindcss.com/docs/guides/vite
+- **상태 관리**: TanStack Query (React Query) 5.84+
+  - 공식 문서: https://tanstack.com/query/latest
+  - React 가이드: https://tanstack.com/query/latest/docs/framework/react/overview
+- **라우팅**: React Router 6.28+
+  - 공식 문서: https://reactrouter.com/
+  - 튜토리얼: https://reactrouter.com/start/tutorial
+- **폼 관리**: React Hook Form 7.x (선택)
+  - 공식 문서: https://react-hook-form.com/
+- **HTTP 클라이언트**: Axios 1.7+ 또는 Fetch API
+  - Axios 문서: https://axios-http.com/docs/intro
 
 #### 5.2.3 UI/UX
 - **디자인 시스템**: Tailwind CSS 기반 커스텀 컴포넌트
-- **아이콘**: Heroicons 또는 Lucide React
-- **마크다운 렌더링**: React Markdown
+- **아이콘**: Heroicons 2.x 또는 Lucide React 0.x
+  - Heroicons: https://heroicons.com/
+  - Lucide React: https://lucide.dev/guide/packages/lucide-react
+- **마크다운 렌더링**: React Markdown 9.x
+  - GitHub: https://github.com/remarkjs/react-markdown
 
 #### 5.2.4 개발 도구
-- **린터**: ESLint
-- **포매터**: Prettier
-- **타입 체킹**: TypeScript Compiler
+- **패키지 관리자**: npm 10.x (Node.js 20 LTS 포함) 또는 pnpm 9.x
+  - pnpm 문서: https://pnpm.io/
+- **린터**: ESLint 9.x
+  - 공식 문서: https://eslint.org/docs/latest/
+- **포매터**: Prettier 3.x
+  - 공식 문서: https://prettier.io/docs/en/
+- **타입 체킹**: TypeScript Compiler (tsc)
 
 ### 5.3 실행 환경 (Docker)
 
@@ -306,15 +350,18 @@ RealWorld는 Medium.com을 모델로 한 소셜 블로깅 플랫폼입니다. �
 - **백엔드 컨테이너**: Spring Boot 애플리케이션
   - Base Image: eclipse-temurin:17-jre-alpine 또는 amazoncorretto:17-alpine
   - 포트: 8080
+  - Docker Hub: https://hub.docker.com/_/eclipse-temurin
 
 - **프론트엔드 컨테이너**: Nginx + React 정적 빌드
-  - Base Image: nginx:alpine
+  - Base Image: nginx:1.27-alpine
   - 포트: 3000 또는 80
+  - Docker Hub: https://hub.docker.com/_/nginx
 
 - **데이터베이스 컨테이너**: PostgreSQL
-  - Base Image: postgres:14-alpine
+  - Base Image: postgres:16-alpine
   - 포트: 5432
   - 볼륨: 데이터 영속성을 위한 named volume
+  - Docker Hub: https://hub.docker.com/_/postgres
 
 #### 5.3.2 Docker Compose 설정
 - 3개 서비스 정의 (backend, frontend, database)
