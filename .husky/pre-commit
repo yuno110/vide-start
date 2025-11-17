@@ -1,0 +1,73 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-commit checks..."
+
+# 프론트엔드 체크
+if [ -d "frontend" ]; then
+  echo ""
+  echo "📱 Checking frontend..."
+  cd frontend
+
+  # Lint 체크
+  if [ -f "package.json" ] && grep -q "\"lint\"" package.json; then
+    echo "  ├─ Running ESLint..."
+    npm run lint || exit 1
+  fi
+
+  # 타입 체크
+  if [ -f "tsconfig.json" ]; then
+    echo "  ├─ Type checking..."
+    npx tsc --noEmit || exit 1
+  fi
+
+  # 빌드 테스트
+  if [ -f "package.json" ] && grep -q "\"build\"" package.json; then
+    echo "  ├─ Building..."
+    npm run build || exit 1
+  fi
+
+  # 테스트 실행
+  if [ -f "package.json" ] && grep -q "\"test\"" package.json; then
+    echo "  └─ Running tests..."
+    npm test -- --run || exit 1
+  fi
+
+  cd ..
+else
+  echo ""
+  echo "ℹ️  Frontend directory not found, skipping frontend checks."
+fi
+
+# 백엔드 체크
+if [ -d "backend" ]; then
+  echo ""
+  echo "☕ Checking backend..."
+  cd backend
+
+  # Checkstyle (코드 스타일 검사)
+  if [ -f "gradlew" ]; then
+    echo "  ├─ Running Checkstyle..."
+    ./gradlew checkstyleMain checkstyleTest || exit 1
+  fi
+
+  # 빌드 테스트
+  if [ -f "gradlew" ]; then
+    echo "  ├─ Building..."
+    ./gradlew build -x test || exit 1
+  fi
+
+  # 테스트 실행
+  if [ -f "gradlew" ]; then
+    echo "  └─ Running tests..."
+    ./gradlew test || exit 1
+  fi
+
+  cd ..
+else
+  echo ""
+  echo "ℹ️  Backend directory not found, skipping backend checks."
+fi
+
+echo ""
+echo "✅ All checks passed!"

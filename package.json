@@ -1,0 +1,19 @@
+{
+  "name": "vide-start",
+  "version": "1.0.0",
+  "description": "> **\"실제 세계의 애플리케이션을 만들어보세요\"**\r >\r > Medium.com을 모델로 한 풀스택 소셜 블로깅 플랫폼 구현 프로젝트",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}
