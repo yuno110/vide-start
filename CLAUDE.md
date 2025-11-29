@@ -375,6 +375,11 @@ public class ArticleService {
 ### 다음 작업
 - JWT 토큰 생성 로직 구현
 ```
+### Husky를 사용한 Git Hook 설정
+##### 프로젝트의 코드 품질을 유지하기 위해 Husky를 사용하여 pre-commit 시점에 lint, build, test를 자동 실행합니다.
+
+
+
 
 3. **작업 완료 시 이슈 업데이트**
    - 체크박스 업데이트
