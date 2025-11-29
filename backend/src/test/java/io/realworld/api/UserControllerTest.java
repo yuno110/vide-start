@@ -65,7 +65,7 @@ class UserControllerTest {
 
         // 현재 사용자 정보 조회
         mockMvc.perform(get("/api/user")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", "Token " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.user.email").value("test@example.com"))
                 .andExpect(jsonPath("$.user.username").value("testuser"))
@@ -106,7 +106,7 @@ class UserControllerTest {
         );
 
         mockMvc.perform(put("/api/user")
-                        .header("Authorization", "Bearer " + token)
+                        .header("Authorization", "Token " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())

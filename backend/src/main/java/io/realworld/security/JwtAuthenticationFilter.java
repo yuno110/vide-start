@@ -59,11 +59,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     /**
      * HTTP 요청 헤더에서 JWT 토큰 추출
+     * RealWorld API 스펙에 따라 "Token " 접두사 사용
      */
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Token ")) {
+            return bearerToken.substring(6);
         }
         return null;
     }

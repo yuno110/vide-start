@@ -1,5 +1,6 @@
 package io.realworld.config;
 
+import io.realworld.api.dto.ArticleResponse;
 import io.realworld.api.dto.UserResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -23,15 +24,14 @@ public class ResponseWrapper implements ResponseBodyAdvice<Object> {
             MethodParameter returnType,
             Class<? extends HttpMessageConverter<?>> converterType
     ) {
-        // UserResponse 타입이거나 ResponseEntity<UserResponse> 타입인 경우 지원
         Class<?> paramType = returnType.getParameterType();
-        if (paramType == UserResponse.class) {
+        if (paramType == UserResponse.class || paramType == ArticleResponse.class) {
             return true;
         }
         // ResponseEntity의 제네릭 타입 확인
         if (returnType.getGenericParameterType() != null) {
             String typeName = returnType.getGenericParameterType().getTypeName();
-            return typeName.contains("UserResponse");
+            return typeName.contains("UserResponse") || typeName.contains("ArticleResponse");
         }
         return false;
     }
@@ -48,6 +48,11 @@ public class ResponseWrapper implements ResponseBodyAdvice<Object> {
         if (body instanceof UserResponse) {
             Map<String, Object> wrapped = new HashMap<>();
             wrapped.put("user", body);
+            return wrapped;
+        }
+        if (body instanceof ArticleResponse) {
+            Map<String, Object> wrapped = new HashMap<>();
+            wrapped.put("article", body);
             return wrapped;
         }
         return body;
