@@ -2,10 +2,34 @@
 .idea/
 .vscode/
 .claude/
+*.swp
+*.swo
 
-# Dependencies
-node_modules/
-vendor/
+# Backend (Spring Boot / Gradle)
+backend/build/
+backend/.gradle/
+backend/bin/
+backend/*.iml
+backend/*.iws
+backend/*.ipr
+backend/out/
+backend/.classpath
+backend/.project
+backend/.settings/
+
+# Frontend (React / Node)
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env.local
+frontend/.env.*.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.pnpm-debug.log*
+
+# Docker
+docker/*.log
 
 # Environment
 .env
@@ -15,3 +39,7 @@ vendor/
 dist/
 build/
 *.log
+
+# Dependencies
+node_modules/
+vendor/

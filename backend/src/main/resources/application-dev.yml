@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/realworld_dev
+    username: postgres
+    password: password
+
+  jpa:
+    show-sql: true
+
+logging:
+  level:
+    io.realworld: DEBUG
