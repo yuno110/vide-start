@@ -1,8 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/realworld_dev
-    username: postgres
-    password: password
+    url: jdbc:sqlite:data/realworld-dev.db
 
   jpa:
     show-sql: true

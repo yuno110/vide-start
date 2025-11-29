@@ -31,7 +31,10 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.flywaydb:flyway-core")
-	implementation("org.flywaydb:flyway-database-postgresql")
+
+	// SQLite 데이터베이스
+	runtimeOnly("org.xerial:sqlite-jdbc:3.47.1.0")
+	runtimeOnly("org.hibernate.orm:hibernate-community-dialects:6.6.4.Final")
 
 	// JWT 인증
 	implementation("io.jsonwebtoken:jjwt-api:0.12.3")
@@ -42,7 +45,6 @@ dependencies {
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 
 	compileOnly("org.projectlombok:lombok")
-	runtimeOnly("org.postgresql:postgresql")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

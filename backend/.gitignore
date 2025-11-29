@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### SQLite Database ###
+data/*.db
+data/*.db-shm
+data/*.db-wal

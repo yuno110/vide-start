@@ -1,8 +1,6 @@
 spring:
   datasource:
-    url: ${DATABASE_URL}
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
+    url: jdbc:sqlite:${DATABASE_PATH:data/realworld-prod.db}
 
   jpa:
     show-sql: false
