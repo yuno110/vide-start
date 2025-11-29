@@ -4,7 +4,7 @@
 > **작성일**: 2025-11-11
 > **기반 문서**: RealWorld-PRD.md, https://realworld-docs.netlify.app/
 
-이 문서는 RealWorld 앱(Medium.com 클론)을 Spring Boot(백엔드) + React(프론트엔드) + PostgreSQL(데이터베이스)로 구현하기 위한 상세 작업 목록입니다.
+이 문서는 RealWorld 앱(Medium.com 클론)을 Spring Boot(백엔드) + React(프론트엔드) + SQLite(데이터베이스)로 구현하기 위한 상세 작업 목록입니다.
 
 ---
 
@@ -54,7 +54,14 @@
   - Favorite (좋아요)
   - Follow (팔로우)
 
-### 2.2 Flyway 마이그레이션 스크립트 작성
+### 2.2 SQLite 설정 및 드라이버 추가
+- [ ] build.gradle.kts에 SQLite JDBC 드라이버 추가
+- [ ] build.gradle.kts에 Hibernate Community Dialects 추가 (SQLite 방언)
+- [ ] application.yml에 SQLite 데이터베이스 설정 추가
+  - JDBC URL: `jdbc:sqlite:data/realworld.db`
+  - Hibernate dialect: `org.hibernate.community.dialect.SQLiteDialect`
+
+### 2.3 Flyway 마이그레이션 스크립트 작성 (SQLite 문법)
 - [ ] `V1__create_users_table.sql` - 사용자 테이블
 - [ ] `V2__create_articles_table.sql` - 아티클 테이블
 - [ ] `V3__create_comments_table.sql` - 댓글 테이블
@@ -64,7 +71,13 @@
 - [ ] `V7__create_follows_table.sql` - 팔로우 테이블
 - [ ] `V8__add_indexes.sql` - 성능 최적화를 위한 인덱스 추가
 
-**예상 소요 시간**: 2시간
+**주의사항**:
+- SQLite는 `BIGSERIAL` 대신 `INTEGER PRIMARY KEY AUTOINCREMENT` 사용
+- `TIMESTAMP` 대신 `DATETIME` 또는 `TEXT` 사용
+- `DEFAULT CURRENT_TIMESTAMP` 지원
+- 일부 제약조건은 SQLite에서 제한적으로 지원됨
+
+**예상 소요 시간**: 3시간
 
 ---
 
@@ -78,8 +91,9 @@
   - Spring Web
   - Spring Security
   - Spring Data JPA
-  - PostgreSQL Driver
+  - SQLite Driver (org.xerial:sqlite-jdbc)
   - Flyway Migration
+  - Hibernate Community Dialects (SQLite 지원)
   - JWT Library (jjwt)
   - Validation
   - Lombok
@@ -471,14 +485,12 @@
 
 #### 5.2.1 docker-compose.yml 작성
 - [ ] 서비스 정의
-  - `db` (PostgreSQL)
-  - `backend` (Spring Boot)
+  - `backend` (Spring Boot + SQLite)
   - `frontend` (Nginx + React)
 - [ ] 환경 변수 설정
-- [ ] 볼륨 설정 (데이터베이스 영속성)
+- [ ] 볼륨 설정 (SQLite 데이터베이스 파일 영속성)
 - [ ] 네트워크 설정
 - [ ] 의존성 설정 (depends_on)
-- [ ] 헬스체크 설정
 
 #### 5.2.2 개발 환경 docker-compose
 - [ ] `docker-compose.dev.yml` 작성
@@ -525,8 +537,8 @@
 - [ ] 데이터베이스 트랜잭션 테스트
 - [ ] 인증/권한 테스트
 
-#### 6.1.3 Testcontainers 설정
-- [ ] PostgreSQL 테스트 컨테이너 설정
+#### 6.1.3 테스트 데이터베이스 설정
+- [ ] 인메모리 SQLite 데이터베이스 설정 (`:memory:`)
 - [ ] 통합 테스트 환경 구성
 
 **예상 소요 시간**: 6시간

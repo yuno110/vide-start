@@ -77,7 +77,7 @@ graph TB
     end
 
     subgraph "데이터 레이어"
-        DB[(PostgreSQL<br/>관계형 DB)]
+        DB[(SQLite<br/>관계형 DB)]
     end
 
     Browser -->|HTTP/HTTPS| Nginx
@@ -103,7 +103,7 @@ graph TB
 | **웹 서버** | Nginx | 정적 파일 서빙, 리버스 프록시 |
 | **API 서버** | Spring Boot 3.x | 비즈니스 로직, REST API 제공 |
 | **인증** | Spring Security + JWT | 사용자 인증 및 권한 관리 |
-| **데이터베이스** | PostgreSQL 14+ | 데이터 영속성 |
+| **데이터베이스** | SQLite 3.x | 데이터 영속성 |
 
 ### 2.3 통신 흐름
 
@@ -113,7 +113,7 @@ sequenceDiagram
     participant Browser as 브라우저
     participant React as React App
     participant API as Spring Boot API
-    participant DB as PostgreSQL
+    participant DB as SQLite
 
     User->>Browser: 페이지 접속
     Browser->>React: 정적 파일 요청
@@ -504,7 +504,7 @@ graph TB
     end
 
     subgraph "Infrastructure Layer"
-        DB[(PostgreSQL)]
+        DB[(SQLite)]
         Security[Spring Security<br/>JWT Filter]
     end
 
@@ -863,21 +863,21 @@ graph TB
             JRE[Eclipse Temurin JRE 17]
         end
 
-        subgraph "Database Container"
-            PG[(PostgreSQL 14<br/>Port 5432)]
-            Volume[Named Volume<br/>Data Persistence]
+        subgraph "Database"
+            SQLite[(SQLite<br/>파일 기반 DB)]
+            Volume[파일 시스템<br/>Data Persistence]
         end
     end
 
     User[사용자] -->|HTTP| Nginx
     Nginx --> React
     React -->|REST API| Spring
-    Spring -->|JDBC| PG
-    PG --> Volume
+    Spring -->|JDBC| SQLite
+    SQLite --> Volume
 
     style Nginx fill:#009639
     style Spring fill:#6db33f
-    style PG fill:#336791
+    style SQLite fill:#003B57
     style User fill:#e1f5ff
 ```
 
@@ -885,37 +885,16 @@ graph TB
 
 ```yaml
 services:
-  # PostgreSQL 데이터베이스
-  db:
-    image: postgres:14-alpine
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_DB=realworld
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Spring Boot 백엔드
+  # Spring Boot 백엔드 (SQLite 포함)
   backend:
     build: ./backend
     ports:
       - "8080:8080"
     environment:
-      - DATABASE_URL=jdbc:postgresql://db:5432/realworld
-      - DATABASE_USERNAME=postgres
-      - DATABASE_PASSWORD=password
       - JWT_SECRET=your-secret-key
       - JWT_EXPIRATION=86400000
-    depends_on:
-      db:
-        condition: service_healthy
+    volumes:
+      - sqlite_data:/app/data
 
   # React 프론트엔드
   frontend:
@@ -928,7 +907,7 @@ services:
       - backend
 
 volumes:
-  postgres_data:
+  sqlite_data:
 ```
 
 ### 8.3 환경별 배포 전략
@@ -999,8 +978,7 @@ graph TB
     end
 
     subgraph "Database"
-        Master[(Master DB)]
-        Replica[(Replica DB)]
+        SQLiteDB[(SQLite DB)]
     end
 
     Cache[(Redis Cache)]
@@ -1011,14 +989,12 @@ graph TB
     F2 --> B2
     B1 --> Cache
     B2 --> Cache
-    B1 --> Master
-    B2 --> Master
-    Master --> Replica
+    B1 --> SQLiteDB
+    B2 --> SQLiteDB
 
     style LB fill:#ff9800
     style Cache fill:#dc143c
-    style Master fill:#336791
-    style Replica fill:#87ceeb
+    style SQLiteDB fill:#003B57
 ```
 
 ---
@@ -1049,7 +1025,7 @@ graph TB
 
 - **단위 테스트**: Service, Repository, Utility
 - **통합 테스트**: Controller, API, 데이터베이스
-- **Testcontainers**: PostgreSQL 테스트 컨테이너
+- **테스트 DB**: 인메모리 SQLite
 
 #### 10.2.2 프론트엔드
 

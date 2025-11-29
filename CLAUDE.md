@@ -24,7 +24,7 @@ Claude Code 작업 가이드
 **백엔드**
 - Java 17 + Spring Boot 3.x + Gradle
 - Spring Security + JWT
-- Spring Data JPA + PostgreSQL
+- Spring Data JPA + SQLite
 - Flyway Migration
 
 **프론트엔드**
@@ -85,10 +85,14 @@ hooks/       - React Query 훅
 - 이슈 번호 포함: `사용자 인증 기능 구현 (#5)`
 - 각 커밋은 빌드 가능하고 테스트 통과 상태여야 함
 - 변경사항이 많으면 의미 단위로 분리하여 순차 커밋
+- **커밋과 푸시는 사용자가 직접 수행** (자동으로 하지 않음)
 
 ### 이슈 관리 방식
 
-**⚠️ 중요: 이슈에 답글을 달지 말고, 이슈 본문을 직접 업데이트합니다.**
+**⚠️ 중요 규칙:**
+1. **절대로 이슈에 댓글(comment)을 달지 않습니다**
+2. **이슈 본문(body)만 직접 수정합니다**
+3. **`gh issue close`에 `--comment` 옵션을 사용하지 않습니다**
 
 #### 작업 시작
 1. 이슈 본문의 체크박스 확인
@@ -99,29 +103,20 @@ hooks/       - React Query 훅
 # 이슈 본문 읽기
 gh issue view [number] --json body -q .body
 
-# 이슈 본문 업데이트
+# 이슈 본문 업데이트 (체크박스 체크)
 gh issue edit [number] --body "$(cat updated-issue.md)"
 ```
 
 #### 작업 완료 시
-1. 모든 체크박스 완료 확인
-2. 이슈 본문 하단에 "작업 완료" 섹션 추가:
-```markdown
----
-
-## ✅ 작업 완료
-
-**커밋**: `abc1234`
-**완료 일시**: 2025-11-29
-
-### 구현 내용
-- 주요 구현 사항 요약
-
-### 테스트 결과
-- ✅ 빌드 성공
-- ✅ 테스트 통과
+1. 모든 체크박스를 체크하여 이슈 본문 업데이트
+2. 사용자가 직접 커밋 및 푸시 수행
+3. 커밋 완료 후, 이슈 닫기:
+```bash
+# 이슈 닫기 (댓글 없이)
+gh issue close [number]
 ```
-3. 이슈 닫기
+
+**주의**: 작업이 완료되어도 사용자가 커밋하기 전까지는 이슈를 닫지 않습니다.
 
 ### Git Hook (Husky)
 Pre-commit 시점에 자동 실행:
