@@ -13,9 +13,10 @@ import java.util.Optional;
 public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     /**
-     * slug로 아티클 조회
+     * slug로 아티클 조회 (tags, author eager fetch)
      */
-    Optional<Article> findBySlug(String slug);
+    @Query("SELECT a FROM Article a LEFT JOIN FETCH a.tags LEFT JOIN FETCH a.author WHERE a.slug = :slug")
+    Optional<Article> findBySlug(@Param("slug") String slug);
 
     /**
      * slug 존재 여부 확인

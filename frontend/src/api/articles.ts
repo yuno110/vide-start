@@ -1,5 +1,5 @@
 import apiClient from './client';
-import type { ArticlesResponse, TagsResponse } from '../types';
+import type { ArticlesResponse, ArticleResponse, TagsResponse } from '../types';
 
 export interface GetArticlesParams {
   tag?: string;
@@ -45,4 +45,19 @@ export const favoriteArticle = async (slug: string): Promise<void> => {
  */
 export const unfavoriteArticle = async (slug: string): Promise<void> => {
   await apiClient.delete(`/articles/${slug}/favorite`);
+};
+
+/**
+ * 아티클 상세 조회
+ */
+export const getArticle = async (slug: string): Promise<ArticleResponse> => {
+  const response = await apiClient.get<ArticleResponse>(`/articles/${slug}`);
+  return response.data;
+};
+
+/**
+ * 아티클 삭제
+ */
+export const deleteArticle = async (slug: string): Promise<void> => {
+  await apiClient.delete(`/articles/${slug}`);
 };
