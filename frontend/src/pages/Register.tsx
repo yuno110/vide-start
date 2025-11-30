@@ -1,38 +1,28 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 import ErrorMessage from '../components/ui/ErrorMessage';
+import { useRegister, getErrorMessage } from '../hooks/useRegister';
+
+interface RegisterFormData {
+  username: string;
+  email: string;
+  password: string;
+}
 
 export default function Register() {
-  const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormData>();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
+  const registerMutation = useRegister();
 
-    try {
-      // TODO: API 연동
-      console.log('Register:', { username, email, password });
-
-      // 임시: 로컬스토리지에 토큰 저장
-      localStorage.setItem('token', 'sample-token');
-      localStorage.setItem('username', username);
-
-      navigate('/');
-      window.location.reload(); // Header 업데이트를 위해 새로고침
-    } catch {
-      setError('회원가입에 실패했습니다. 다시 시도해주세요.');
-    } finally {
-      setIsLoading(false);
-    }
+  const onSubmit = (data: RegisterFormData) => {
+    registerMutation.mutate(data);
   };
 
   return (
@@ -46,41 +36,77 @@ export default function Register() {
             </Link>
           </p>
 
-          {error && <ErrorMessage className="mb-4">{error}</ErrorMessage>}
+          {registerMutation.isError && (
+            <ErrorMessage className="mb-4">
+              {getErrorMessage(registerMutation.error)}
+            </ErrorMessage>
+          )}
 
-          <form onSubmit={handleSubmit} className="bg-white rounded-lg border border-gray-200 p-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-lg border border-gray-200 p-6">
             <div className="space-y-4">
-              <Input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                fullWidth
-                required
-              />
-              <Input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                fullWidth
-                required
-              />
-              <Input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                fullWidth
-                required
-                minLength={8}
-              />
+              <div>
+                <Input
+                  type="text"
+                  placeholder="Username"
+                  {...register('username', {
+                    required: '사용자명을 입력해주세요.',
+                    minLength: {
+                      value: 3,
+                      message: '사용자명은 최소 3자 이상이어야 합니다.',
+                    },
+                  })}
+                  fullWidth
+                  aria-invalid={errors.username ? 'true' : 'false'}
+                />
+                {errors.username && (
+                  <p className="mt-1 text-sm text-red-600">{errors.username.message}</p>
+                )}
+              </div>
+
+              <div>
+                <Input
+                  type="email"
+                  placeholder="Email"
+                  {...register('email', {
+                    required: '이메일을 입력해주세요.',
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: '올바른 이메일 형식이 아닙니다.',
+                    },
+                  })}
+                  fullWidth
+                  aria-invalid={errors.email ? 'true' : 'false'}
+                />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                )}
+              </div>
+
+              <div>
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  {...register('password', {
+                    required: '비밀번호를 입력해주세요.',
+                    minLength: {
+                      value: 8,
+                      message: '비밀번호는 최소 8자 이상이어야 합니다.',
+                    },
+                  })}
+                  fullWidth
+                  aria-invalid={errors.password ? 'true' : 'false'}
+                />
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+                )}
+              </div>
+
               <Button
                 type="submit"
                 variant="primary"
                 size="lg"
                 fullWidth
-                isLoading={isLoading}
+                isLoading={registerMutation.isPending}
               >
                 Sign up
               </Button>

@@ -67,3 +67,36 @@ export interface ProfileResponse {
 export interface TagsResponse {
   tags: string[];
 }
+
+// API 요청 타입
+export interface LoginRequest {
+  user: {
+    email: string;
+    password: string;
+  };
+}
+
+export interface RegisterRequest {
+  user: {
+    username: string;
+    email: string;
+    password: string;
+  };
+}
+
+export interface UpdateUserRequest {
+  user: {
+    email?: string;
+    username?: string;
+    password?: string;
+    bio?: string;
+    image?: string;
+  };
+}
+
+// 에러 응답 타입
+export interface ErrorResponse {
+  errors: {
+    [key: string]: string[];
+  };
+}
