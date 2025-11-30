@@ -1,26 +1,7 @@
 import ArticlePreview from './ArticlePreview';
 import LoadingSpinner from '../ui/LoadingSpinner';
 import ErrorMessage from '../ui/ErrorMessage';
-
-interface Author {
-  username: string;
-  bio?: string;
-  image?: string;
-  following?: boolean;
-}
-
-interface Article {
-  slug: string;
-  title: string;
-  description: string;
-  body?: string;
-  tagList: string[];
-  createdAt: string;
-  updatedAt?: string;
-  favorited: boolean;
-  favoritesCount: number;
-  author: Author;
-}
+import type { Article } from '../../types';
 
 interface ArticleListProps {
   articles?: Article[];

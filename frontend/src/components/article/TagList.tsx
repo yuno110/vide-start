@@ -1,9 +1,10 @@
 interface TagListProps {
   tags: string[];
   className?: string;
+  onTagClick?: (tag: string) => void;
 }
 
-export default function TagList({ tags, className = '' }: TagListProps) {
+export default function TagList({ tags, className = '', onTagClick }: TagListProps) {
   if (!tags || tags.length === 0) return null;
 
   return (
@@ -11,7 +12,10 @@ export default function TagList({ tags, className = '' }: TagListProps) {
       {tags.map((tag) => (
         <span
           key={tag}
-          className="inline-block px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 border border-gray-200 rounded-full hover:bg-gray-200 transition-colors"
+          onClick={() => onTagClick?.(tag)}
+          className={`inline-block px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 border border-gray-200 rounded-full transition-colors ${
+            onTagClick ? 'cursor-pointer hover:bg-gray-200' : ''
+          }`}
         >
           {tag}
         </span>

@@ -1,26 +1,7 @@
 import { Link } from 'react-router-dom';
 import ArticleMeta from './ArticleMeta';
 import TagList from './TagList';
-
-interface Author {
-  username: string;
-  bio?: string;
-  image?: string;
-  following?: boolean;
-}
-
-interface Article {
-  slug: string;
-  title: string;
-  description: string;
-  body?: string;
-  tagList: string[];
-  createdAt: string;
-  updatedAt?: string;
-  favorited: boolean;
-  favoritesCount: number;
-  author: Author;
-}
+import type { Article } from '../../types';
 
 interface ArticlePreviewProps {
   article: Article;

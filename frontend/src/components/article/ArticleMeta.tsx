@@ -1,15 +1,9 @@
 import { Link } from 'react-router-dom';
 import Button from '../ui/Button';
-
-interface Author {
-  username: string;
-  bio?: string;
-  image?: string;
-  following?: boolean;
-}
+import type { Profile } from '../../types';
 
 interface ArticleMetaProps {
-  author: Author;
+  author: Profile;
   createdAt: string;
   favorited?: boolean;
   favoritesCount?: number;

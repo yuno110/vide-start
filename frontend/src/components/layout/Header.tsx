@@ -1,20 +1,18 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useAuth } from '../../hooks/useAuthContext';
 
 export default function Header() {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return !!localStorage.getItem('token');
-  });
+  const { isLoggedIn, logout } = useAuth();
   const [username, setUsername] = useState(() => {
     return localStorage.getItem('username') || '';
   });
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
     localStorage.removeItem('username');
-    setIsLoggedIn(false);
     setUsername('');
+    logout();
     navigate('/');
   };
 

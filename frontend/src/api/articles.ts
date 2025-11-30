@@ -1,0 +1,48 @@
+import apiClient from './client';
+import type { ArticlesResponse, TagsResponse } from '../types';
+
+export interface GetArticlesParams {
+  tag?: string;
+  author?: string;
+  favorited?: string;
+  limit?: number;
+  offset?: number;
+}
+
+/**
+ * 전역 아티클 목록 조회
+ */
+export const getArticles = async (params?: GetArticlesParams): Promise<ArticlesResponse> => {
+  const response = await apiClient.get<ArticlesResponse>('/articles', { params });
+  return response.data;
+};
+
+/**
+ * 팔로우한 사용자의 아티클 목록 조회 (나의 피드)
+ */
+export const getFeed = async (params?: { limit?: number; offset?: number }): Promise<ArticlesResponse> => {
+  const response = await apiClient.get<ArticlesResponse>('/articles/feed', { params });
+  return response.data;
+};
+
+/**
+ * 인기 태그 목록 조회
+ */
+export const getTags = async (): Promise<TagsResponse> => {
+  const response = await apiClient.get<TagsResponse>('/tags');
+  return response.data;
+};
+
+/**
+ * 아티클 좋아요
+ */
+export const favoriteArticle = async (slug: string): Promise<void> => {
+  await apiClient.post(`/articles/${slug}/favorite`);
+};
+
+/**
+ * 아티클 좋아요 취소
+ */
+export const unfavoriteArticle = async (slug: string): Promise<void> => {
+  await apiClient.delete(`/articles/${slug}/favorite`);
+};
