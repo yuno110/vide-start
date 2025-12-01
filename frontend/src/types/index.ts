@@ -94,6 +94,24 @@ export interface UpdateUserRequest {
   };
 }
 
+export interface CreateArticleRequest {
+  article: {
+    title: string;
+    description: string;
+    body: string;
+    tagList?: string[];
+  };
+}
+
+export interface UpdateArticleRequest {
+  article: {
+    title?: string;
+    description?: string;
+    body?: string;
+    tagList?: string[];
+  };
+}
+
 // 에러 응답 타입
 export interface ErrorResponse {
   errors: {

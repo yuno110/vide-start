@@ -1,5 +1,11 @@
 import apiClient from './client';
-import type { ArticlesResponse, ArticleResponse, TagsResponse } from '../types';
+import type {
+  ArticlesResponse,
+  ArticleResponse,
+  TagsResponse,
+  CreateArticleRequest,
+  UpdateArticleRequest,
+} from '../types';
 
 export interface GetArticlesParams {
   tag?: string;
@@ -60,4 +66,23 @@ export const getArticle = async (slug: string): Promise<ArticleResponse> => {
  */
 export const deleteArticle = async (slug: string): Promise<void> => {
   await apiClient.delete(`/articles/${slug}`);
+};
+
+/**
+ * 아티클 생성
+ */
+export const createArticle = async (data: CreateArticleRequest): Promise<ArticleResponse> => {
+  const response = await apiClient.post<ArticleResponse>('/articles', data);
+  return response.data;
+};
+
+/**
+ * 아티클 수정
+ */
+export const updateArticle = async (
+  slug: string,
+  data: UpdateArticleRequest
+): Promise<ArticleResponse> => {
+  const response = await apiClient.put<ArticleResponse>(`/articles/${slug}`, data);
+  return response.data;
 };
