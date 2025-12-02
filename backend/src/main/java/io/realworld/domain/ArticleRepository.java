@@ -44,4 +44,10 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
      * 최신 아티클 목록 조회
      */
     List<Article> findAllByOrderByCreatedAtDesc();
+
+    /**
+     * 특정 작성자들의 아티클 목록 조회 (피드)
+     */
+    @Query("SELECT a FROM Article a WHERE a.author IN :authors ORDER BY a.createdAt DESC")
+    List<Article> findByAuthorInOrderByCreatedAtDesc(@Param("authors") List<User> authors);
 }

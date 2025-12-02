@@ -24,6 +24,7 @@ public class ArticleService {
     private final TagRepository tagRepository;
     private final UserRepository userRepository;
     private final FavoriteRepository favoriteRepository;
+    private final FollowRepository followRepository;
 
     private static final Pattern NON_LATIN = Pattern.compile("[^\\w-]");
     private static final Pattern WHITESPACE = Pattern.compile("[\\s]");
@@ -98,6 +99,26 @@ public class ArticleService {
         return favorites.stream()
                 .map(Favorite::getArticle)
                 .toList();
+    }
+
+    /**
+     * 팔로우한 사용자들의 아티클 조회 (피드)
+     */
+    public List<Article> findByFollowedUsers(User currentUser) {
+        // 팔로우하는 사용자 목록 조회
+        List<Follow> follows = followRepository.findByFollower(currentUser);
+
+        if (follows.isEmpty()) {
+            return List.of();
+        }
+
+        // 팔로우하는 사용자들의 User 객체 추출
+        List<User> followedUsers = follows.stream()
+                .map(Follow::getFollowing)
+                .toList();
+
+        // 팔로우하는 사용자들의 아티클 조회
+        return articleRepository.findByAuthorInOrderByCreatedAtDesc(followedUsers);
     }
 
     /**

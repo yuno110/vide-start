@@ -76,6 +76,30 @@ public class ArticleController {
     }
 
     /**
+     * 팔로우한 사용자들의 아티클 피드 조회
+     */
+    @GetMapping("/feed")
+    public ResponseEntity<ArticleListResponse> getFeed(
+            @RequestParam(defaultValue = "20") int limit,
+            @RequestParam(defaultValue = "0") int offset,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        User currentUser = getCurrentUserRequired(userDetails);
+
+        // 팔로우한 사용자들의 아티클 조회
+        List<Article> articles = articleService.findByFollowedUsers(currentUser);
+
+        // 페이지네이션 적용
+        List<ArticleResponse> articleResponses = articles.stream()
+                .skip(offset)
+                .limit(limit)
+                .map(article -> toArticleResponse(article, currentUser))
+                .toList();
+
+        return ResponseEntity.ok(ArticleListResponse.of(articleResponses));
+    }
+
+    /**
      * 아티클 상세 조회
      */
     @GetMapping("/{slug}")
