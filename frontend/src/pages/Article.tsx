@@ -5,7 +5,7 @@ import LoadingSpinner from '../components/ui/LoadingSpinner';
 import ErrorMessage from '../components/ui/ErrorMessage';
 import TagList from '../components/article/TagList';
 import CommentList from '../components/comment/CommentList';
-import { useArticle, useDeleteArticle } from '../hooks/useArticles';
+import { useArticle, useDeleteArticle, useFavoriteArticle, useUnfavoriteArticle } from '../hooks/useArticles';
 import { useAuth } from '../hooks/useAuthContext';
 
 export default function Article() {
@@ -23,6 +23,9 @@ export default function Article() {
       navigate('/');
     },
   });
+
+  const favoriteMutation = useFavoriteArticle();
+  const unfavoriteMutation = useUnfavoriteArticle();
 
   if (!slug) {
     return (
@@ -56,6 +59,19 @@ export default function Article() {
   const handleDelete = () => {
     if (window.confirm('정말로 이 아티클을 삭제하시겠습니까?')) {
       deleteMutation.mutate(slug);
+    }
+  };
+
+  const handleFavorite = () => {
+    if (!isLoggedIn) {
+      navigate('/login');
+      return;
+    }
+
+    if (article.favorited) {
+      unfavoriteMutation.mutate(slug);
+    } else {
+      favoriteMutation.mutate(slug);
     }
   };
 
@@ -97,6 +113,34 @@ export default function Article() {
                 <p className="text-gray-400 text-sm">{formatDate(article.createdAt)}</p>
               </div>
             </div>
+
+            {/* 좋아요 버튼 (비작성자) */}
+            {!isAuthor && (
+              <button
+                onClick={handleFavorite}
+                disabled={favoriteMutation.isPending || unfavoriteMutation.isPending}
+                className={`px-4 py-2 text-sm rounded transition-colors flex items-center gap-2 ${
+                  article.favorited
+                    ? 'bg-green-600 text-white hover:bg-green-700'
+                    : 'border border-green-600 text-green-600 hover:bg-green-600 hover:text-white'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill={article.favorited ? 'currentColor' : 'none'}
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+                {article.favorited ? 'Unfavorite' : 'Favorite'} ({article.favoritesCount})
+              </button>
+            )}
 
             {/* 작성자 액션 버튼 */}
             {isAuthor && (
@@ -183,6 +227,34 @@ export default function Article() {
                 )}
               </div>
             </div>
+
+            {/* 좋아요 버튼 (하단, 비작성자) */}
+            {!isAuthor && (
+              <button
+                onClick={handleFavorite}
+                disabled={favoriteMutation.isPending || unfavoriteMutation.isPending}
+                className={`px-4 py-2 text-sm rounded transition-colors flex items-center gap-2 ${
+                  article.favorited
+                    ? 'bg-green-600 text-white hover:bg-green-700'
+                    : 'border border-green-600 text-green-600 hover:bg-green-600 hover:text-white'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill={article.favorited ? 'currentColor' : 'none'}
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+                {article.favorited ? 'Unfavorite' : 'Favorite'} ({article.favoritesCount})
+              </button>
+            )}
 
             {/* 작성자 액션 버튼 (하단) */}
             {isAuthor && (

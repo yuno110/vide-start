@@ -150,6 +150,34 @@ public class ArticleController {
     }
 
     /**
+     * 아티클 좋아요
+     */
+    @PostMapping("/{slug}/favorite")
+    public ResponseEntity<ArticleResponse> favoriteArticle(
+            @PathVariable String slug,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        User currentUser = getCurrentUserRequired(userDetails);
+        Article article = articleService.favoriteArticle(slug, currentUser);
+        ArticleResponse response = toArticleResponse(article, currentUser);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 아티클 좋아요 취소
+     */
+    @DeleteMapping("/{slug}/favorite")
+    public ResponseEntity<ArticleResponse> unfavoriteArticle(
+            @PathVariable String slug,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        User currentUser = getCurrentUserRequired(userDetails);
+        Article article = articleService.unfavoriteArticle(slug, currentUser);
+        ArticleResponse response = toArticleResponse(article, currentUser);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
      * Article을 ArticleResponse로 변환
      */
     private ArticleResponse toArticleResponse(Article article, User currentUser) {

@@ -42,15 +42,17 @@ export const getTags = async (): Promise<TagsResponse> => {
 /**
  * 아티클 좋아요
  */
-export const favoriteArticle = async (slug: string): Promise<void> => {
-  await apiClient.post(`/articles/${slug}/favorite`);
+export const favoriteArticle = async (slug: string): Promise<ArticleResponse> => {
+  const response = await apiClient.post<ArticleResponse>(`/articles/${slug}/favorite`);
+  return response.data;
 };
 
 /**
  * 아티클 좋아요 취소
  */
-export const unfavoriteArticle = async (slug: string): Promise<void> => {
-  await apiClient.delete(`/articles/${slug}/favorite`);
+export const unfavoriteArticle = async (slug: string): Promise<ArticleResponse> => {
+  const response = await apiClient.delete<ArticleResponse>(`/articles/${slug}/favorite`);
+  return response.data;
 };
 
 /**

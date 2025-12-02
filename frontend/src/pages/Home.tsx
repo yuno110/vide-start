@@ -1,23 +1,29 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import ArticleList from '../components/article/ArticleList';
 import Pagination from '../components/ui/Pagination';
 import TagList from '../components/article/TagList';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import ErrorMessage from '../components/ui/ErrorMessage';
-import { useArticles, useFeed } from '../hooks/useArticles';
+import { useArticles, useFeed, useFavoriteArticle, useUnfavoriteArticle } from '../hooks/useArticles';
 import { useTags } from '../hooks/useTags';
 import { useAuth } from '../hooks/useAuthContext';
 
 const ARTICLES_PER_PAGE = 10;
 
 export default function Home() {
+  const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState<'global' | 'feed' | 'tag'>('global');
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
   const offset = (currentPage - 1) * ARTICLES_PER_PAGE;
+
+  // 좋아요 Mutation
+  const favoriteMutation = useFavoriteArticle();
+  const unfavoriteMutation = useUnfavoriteArticle();
 
   // 전역 피드 또는 태그 필터링된 아티클
   const {
@@ -70,8 +76,22 @@ export default function Home() {
   };
 
   const handleFavorite = (slug: string) => {
-    console.log('Favorite article:', slug);
-    // TODO: 좋아요 기능 구현
+    // 로그인 체크
+    if (!isLoggedIn) {
+      navigate('/login');
+      return;
+    }
+
+    // 현재 아티클의 좋아요 상태 확인
+    const article = currentData?.articles.find((a) => a.slug === slug);
+    if (!article) return;
+
+    // 좋아요 토글
+    if (article.favorited) {
+      unfavoriteMutation.mutate(slug);
+    } else {
+      favoriteMutation.mutate(slug);
+    }
   };
 
   // 현재 활성화된 탭의 데이터

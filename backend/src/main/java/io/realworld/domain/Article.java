@@ -50,7 +50,7 @@ public class Article extends BaseTimeEntity {
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "article_tags",
         joinColumns = @JoinColumn(name = "article_id"),

@@ -161,6 +161,39 @@ public class ArticleService {
     }
 
     /**
+     * 아티클 좋아요
+     */
+    @Transactional
+    public Article favoriteArticle(String slug, User user) {
+        Article article = findBySlug(slug);
+
+        // 이미 좋아요한 경우 그대로 반환
+        if (favoriteRepository.existsByUserAndArticle(user, article)) {
+            return article;
+        }
+
+        // 좋아요 추가
+        Favorite favorite = new Favorite(user, article);
+        favoriteRepository.save(favorite);
+
+        return article;
+    }
+
+    /**
+     * 아티클 좋아요 취소
+     */
+    @Transactional
+    public Article unfavoriteArticle(String slug, User user) {
+        Article article = findBySlug(slug);
+
+        // 좋아요 찾아서 삭제
+        favoriteRepository.findByUserAndArticle(user, article)
+                .ifPresent(favoriteRepository::delete);
+
+        return article;
+    }
+
+    /**
      * Slug 생성 (URL-friendly)
      */
     public String generateSlug(String title) {
