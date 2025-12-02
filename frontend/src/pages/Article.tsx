@@ -4,6 +4,7 @@ import Layout from '../components/layout/Layout';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import ErrorMessage from '../components/ui/ErrorMessage';
 import TagList from '../components/article/TagList';
+import CommentList from '../components/comment/CommentList';
 import { useArticle, useDeleteArticle } from '../hooks/useArticles';
 import { useAuth } from '../hooks/useAuthContext';
 
@@ -222,6 +223,13 @@ export default function Article() {
               </div>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* 댓글 섹션 */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <CommentList articleSlug={slug} />
         </div>
       </div>
     </Layout>

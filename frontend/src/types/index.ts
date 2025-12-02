@@ -112,6 +112,12 @@ export interface UpdateArticleRequest {
   };
 }
 
+export interface CreateCommentRequest {
+  comment: {
+    body: string;
+  };
+}
+
 // 에러 응답 타입
 export interface ErrorResponse {
   errors: {
