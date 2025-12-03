@@ -1,6 +1,8 @@
 package io.realworld.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,9 +28,10 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Favorite.Fav
     long countByArticle(Article article);
 
     /**
-     * 사용자가 좋아요한 아티클 목록 조회
+     * 사용자가 좋아요한 아티클 목록 조회 (article, author eager fetch)
      */
-    List<Favorite> findByUser(User user);
+    @Query("SELECT f FROM Favorite f JOIN FETCH f.article a LEFT JOIN FETCH a.author WHERE f.user = :user")
+    List<Favorite> findByUser(@Param("user") User user);
 
     /**
      * 아티클의 모든 좋아요 조회

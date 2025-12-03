@@ -1,5 +1,5 @@
 import apiClient from './client';
-import type { LoginRequest, RegisterRequest, UserResponse } from '../types';
+import type { LoginRequest, RegisterRequest, UserResponse, UpdateUserRequest } from '../types';
 
 /**
  * 로그인 API
@@ -41,5 +41,13 @@ export async function register(
  */
 export async function getCurrentUser(): Promise<UserResponse> {
   const response = await apiClient.get<UserResponse>('/user');
+  return response.data;
+}
+
+/**
+ * 사용자 정보 수정 API
+ */
+export async function updateUser(data: UpdateUserRequest): Promise<UserResponse> {
+  const response = await apiClient.put<UserResponse>('/user', data);
   return response.data;
 }

@@ -1,6 +1,7 @@
 package io.realworld.api;
 
 import io.realworld.api.dto.ProfileResponse;
+import io.realworld.api.dto.ProfileResponseWrapper;
 import io.realworld.domain.ProfileService;
 import io.realworld.domain.User;
 import io.realworld.domain.UserRepository;
@@ -30,40 +31,40 @@ public class ProfileController {
      * 프로필 조회
      */
     @GetMapping("/{username}")
-    public ResponseEntity<ProfileResponse> getProfile(
+    public ResponseEntity<ProfileResponseWrapper> getProfile(
             @PathVariable String username,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         User currentUser = getCurrentUser(userDetails);
         User profile = profileService.findByUsername(username);
         boolean following = profileService.isFollowing(currentUser, profile);
-        return ResponseEntity.ok(ProfileResponse.of(profile, following));
+        return ResponseEntity.ok(ProfileResponseWrapper.of(ProfileResponse.of(profile, following)));
     }
 
     /**
      * 사용자 팔로우
      */
     @PostMapping("/{username}/follow")
-    public ResponseEntity<ProfileResponse> followUser(
+    public ResponseEntity<ProfileResponseWrapper> followUser(
             @PathVariable String username,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         User currentUser = getCurrentUserRequired(userDetails);
         User profile = profileService.followUser(currentUser, username);
-        return ResponseEntity.ok(ProfileResponse.of(profile, true));
+        return ResponseEntity.ok(ProfileResponseWrapper.of(ProfileResponse.of(profile, true)));
     }
 
     /**
      * 사용자 언팔로우
      */
     @DeleteMapping("/{username}/follow")
-    public ResponseEntity<ProfileResponse> unfollowUser(
+    public ResponseEntity<ProfileResponseWrapper> unfollowUser(
             @PathVariable String username,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         User currentUser = getCurrentUserRequired(userDetails);
         User profile = profileService.unfollowUser(currentUser, username);
-        return ResponseEntity.ok(ProfileResponse.of(profile, false));
+        return ResponseEntity.ok(ProfileResponseWrapper.of(ProfileResponse.of(profile, false)));
     }
 
     /**

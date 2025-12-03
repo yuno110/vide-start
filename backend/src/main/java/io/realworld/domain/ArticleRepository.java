@@ -24,9 +24,10 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     boolean existsBySlug(String slug);
 
     /**
-     * 작성자로 아티클 목록 조회
+     * 작성자로 아티클 목록 조회 (author eager fetch)
      */
-    List<Article> findByAuthorOrderByCreatedAtDesc(User author);
+    @Query("SELECT a FROM Article a LEFT JOIN FETCH a.author WHERE a.author = :author ORDER BY a.createdAt DESC")
+    List<Article> findByAuthorOrderByCreatedAtDesc(@Param("author") User author);
 
     /**
      * 작성자 ID로 아티클 목록 조회
@@ -35,19 +36,21 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     List<Article> findByAuthorId(@Param("authorId") Long authorId);
 
     /**
-     * 태그를 포함하는 아티클 목록 조회
+     * 태그를 포함하는 아티클 목록 조회 (author eager fetch)
      */
-    @Query("SELECT a FROM Article a JOIN a.tags t WHERE t.name = :tagName ORDER BY a.createdAt DESC")
+    @Query("SELECT DISTINCT a FROM Article a LEFT JOIN FETCH a.author "
+            + "JOIN a.tags t WHERE t.name = :tagName ORDER BY a.createdAt DESC")
     List<Article> findByTagName(@Param("tagName") String tagName);
 
     /**
-     * 최신 아티클 목록 조회
+     * 최신 아티클 목록 조회 (author eager fetch)
      */
+    @Query("SELECT a FROM Article a LEFT JOIN FETCH a.author ORDER BY a.createdAt DESC")
     List<Article> findAllByOrderByCreatedAtDesc();
 
     /**
-     * 특정 작성자들의 아티클 목록 조회 (피드)
+     * 특정 작성자들의 아티클 목록 조회 (피드) (author eager fetch)
      */
-    @Query("SELECT a FROM Article a WHERE a.author IN :authors ORDER BY a.createdAt DESC")
+    @Query("SELECT a FROM Article a LEFT JOIN FETCH a.author WHERE a.author IN :authors ORDER BY a.createdAt DESC")
     List<Article> findByAuthorInOrderByCreatedAtDesc(@Param("authors") List<User> authors);
 }
