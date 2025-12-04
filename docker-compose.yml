@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # 백엔드 서비스
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: realworld-backend
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:sqlite:/app/data/realworld.db
+      - JWT_SECRET=${JWT_SECRET:-realworld-secret-key-for-jwt-token-signing-minimum-256-bits-required}
+      - JWT_EXPIRATION=${JWT_EXPIRATION:-86400000}
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
+    volumes:
+      - backend-data:/app/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  # 프론트엔드 서비스
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: realworld-frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
+# 볼륨 정의
+volumes:
+  backend-data:
+    driver: local
+
+# 네트워크 정의
+networks:
+  app-network:
+    driver: bridge
